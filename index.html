@@ -1,0 +1,33 @@
+<html>
+<head>
+   <title>Fire Stations</title>
+   <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+   <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+   <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+   <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+   <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+
+   <style>
+      body, html { border: 0; padding: 0; margin: 0; font-family: sans-serif}
+      #map { width: 100vw; height: 100vh; }
+      #sidebar {
+         width: 200px;
+         background: white;
+         z-index: 500000;
+         position: absolute;
+         margin: 15px;
+         padding: 15px;
+      }
+   </style>
+</head>
+<body>
+   <div id="sidebar">
+      <h2>Distance</h2>
+      <input type="range" id="range" min="0" value="2500" max="5000">
+      <h2>Jurisdictions</h2>
+      <div class="filters"></div>
+   </div>
+   <div id="map"></div>
+   <script src="index.js"></script>
+</body>
+</html>
