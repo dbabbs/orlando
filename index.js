@@ -7,10 +7,17 @@ const style = 'reduced.night';
 
 const hereTileUrl = `https://2.base.maps.api.here.com/maptile/2.1/maptile/newest/${style}/{z}/{x}/{y}/512/png8?app_id=${here.id}&app_code=${here.code}&ppi=320`;
 
+const key = 'YOUR-API-KEY';
+const tangram = Tangram.leafletLayer({
+   scene: 'scene.yaml'
+})
+
+const scene = tangram.scene;
+
 const map = L.map('map', {
    center: [28.5906121, -81.5137384],
    zoom: 11,
-   layers: [L.tileLayer(hereTileUrl)]
+   layers: [tangram]
 });
 map.attributionControl.addAttribution('&copy; HERE 2019');
 
@@ -86,6 +93,15 @@ function filter(evt) {
 
 const polygonGroup = L.layerGroup().addTo(map);
 
+let loaded = false;
+tangram.scene.subscribe({
+   load: (scene) => {
+      console.log('loaded')
+      loaded = true;
+      // scene.setDataSource('isolines', { type: 'GeoJSON', data});
+   }
+})
+
 async function calculateIsoline() {
    const geoJsonPolygons = [];
    polygonGroup.clearLayers();
@@ -102,21 +118,45 @@ async function calculateIsoline() {
       const shape = x.response.isoline[0].component[0].shape.map(z => z.split(','));
       const poly = L.polygon(shape, {color: '#5DDCCF', weight: 2});
       poly.jurisdiction = coordinates[i].jurisdiction
-      poly.addTo(polygonGroup);
+
+
+      // poly.addTo(polygonGroup);
       
       
       const geoPolygon = turf.polygon([
-         shape.map(x => [x[1], x[0]])
+         
       ])
-      geoJsonPolygons.push(geoPolygon)
+      geoJsonPolygons.push(shape.map(x => [Number(x[1]), Number(x[0])]))
+
+      
+
+
    });
+
+   
+
+   const data = {
+      type: 'FeatureCollection',
+      features: geoJsonPolygons.map(x => ({
+         geometry: {
+            type: 'Polygon',
+            coordinates: [x]
+         },
+         type: "Feature",
+         properties: {}
+      }))
+   }
+
+   if (loaded) {
+      console.log('added')
+      scene.setDataSource('isolines', { type: 'GeoJSON', data});
+   }
+   console.log(scene);
+   
+   
+   
    filter();
    setRangeText();
 
-   createOverlaps(geoJsonPolygons)
-}
-
-function createOverlaps(polygons) {
-   console.log(polygons)
 }
 

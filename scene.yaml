@@ -1,0 +1,89 @@
+cameras:
+    camera1:
+        type: perspective
+sources:
+    xyz_osm:
+        type: MVT
+        url: 'https://xyz.api.here.com/tiles/osmbase/256/all/{z}/{x}/{y}.mvt'
+        url_params:
+            access_token: ASCBZnCcvEMa-vbk9JXixN8
+        max_zoom: 16
+global:
+    language: en
+    language_text_source: "function() {\n    // Use preferred language label if available\n    return (global.language && feature['name:'+global.language]) || feature.name;\n}\n"
+layers:
+    isolines:
+        data:
+            source: isolines
+        draw:
+            polygons:
+                color: black
+    places:
+        data:
+            source: xyz_osm
+        city-points:
+            filter: {kind: locality, kind_detail: city, $zoom: {max: 18}}
+            draw: 
+                text: 
+                    text_source: global.language_text_source
+                    priority: 10
+                    order: 999
+                    font: 
+                        family: Lato
+                        fill: '#C3CDD4'
+                        stroke:
+                            color: white
+                            width: 4
+                            size: [[4, 15px], [8, 18px], [12, 26px]]
+                            buffer: 2px
+        neighborhoods:
+            filter: [{kind: [neighbourhood, macrohood], $zoom: {min: 13}}, {kind: microhood, $zoom: {min: 15}}]
+            draw:
+                text:
+                    text_source: global.language_text_source
+                    priority: 10
+                    order: 999
+                    font:
+                        family: Lato
+                        fill: '#C3CDD4'
+                        stroke:
+                            color: white
+                            width: 4
+                            size: [[4, 10px], [8, 14px],[12, 14px]]
+                            buffer: 2px
+    earth:
+        data:
+            source: xyz_osm
+        draw:
+            polygons: {order: 'function() { return feature.sort_rank; }', color: white}
+    landuse:
+        data:
+            source: xyz_osm
+        draw:
+            polygons: {order: 'function() { return feature.sort_rank; }', color: '#E9EEF1'}
+    water:
+        data:
+            source: xyz_osm
+        draw:
+            polygons: {order: 'function() { return feature.sort_rank; }', color: '#DEE1E3'}
+    roads:
+        data:
+            source: xyz_osm
+        filter:
+            not: {kind: [path, rail, ferry]}
+        draw:
+            lines: {order: 'function() { return feature.sort_rank; }', color: '#C3CDD4', width: 8, cap: round}
+        highway:
+            filter: {kind: highway}
+            draw: {lines: {order: 'function() { return feature.sort_rank; }', color: '#D3DCE1', width: ["- 5\n- 5000", "- 8\n- 800", "- 10\n- 200", "- 12\n- 100", "- 14\n- 40", "- 18\n- 20"], outline: {color: '#EEEEEE', width: ["- 16\n- 0", "- 18\n- 1.5"]}}}
+        minor_road:
+            filter: {kind: minor_road}
+            draw: {lines: {order: 'function() { return feature.sort_rank; }', color: '#F8FAFB', width: 5}}
+    buildings:
+        data:
+            source: xyz_osm
+        draw:
+            polygons: {order: 'function() { return feature.sort_rank; }', color: '#E9EBEB'}
+        3d-buildings:
+            filter: {$zoom: {min: 15}}
+            draw: {polygons: {extrude: 'function () { return feature.height > 20 || $zoom >= 16; }'}}
