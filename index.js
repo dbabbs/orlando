@@ -7,17 +7,12 @@ const style = 'reduced.night';
 
 const hereTileUrl = `https://2.base.maps.api.here.com/maptile/2.1/maptile/newest/${style}/{z}/{x}/{y}/512/png8?app_id=${here.id}&app_code=${here.code}&ppi=320`;
 
-const platform = new H.service.Platform({ apikey: here.apikey });
-const defaultLayers = platform.createDefaultLayers();
-const map = new H.Map(document.getElementById('map'), defaultLayers.vector.normal.map, {
-   center: { lat: 28.1882447, lng: -81.1562729},
-   zoom: 10,
-   pixelRatio: window.devicePixelRatio || 1
+const map = L.map('map', {
+   center: [28.5906121, -81.5137384],
+   zoom: 11,
+   layers: [L.tileLayer(hereTileUrl)]
 });
-const behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
-const provider = map.getBaseLayer().getProvider();
-window.addEventListener('resize', () => map.getViewPort().resize());
-const omvService = platform.getOMVService();
+map.attributionControl.addAttribution('&copy; HERE 2019');
 
 const isolineUrl = (center, range, mode = 'car', rangeType = 'distance') => 
 `https://isoline.route.api.here.com/routing/7.2/calculateisoline.json
@@ -25,26 +20,38 @@ const isolineUrl = (center, range, mode = 'car', rangeType = 'distance') =>
 &app_code=${here.code}
 &mode=shortest;${mode};
 traffic:${'enabled'}
-&start=geo!${center.lat},${center.lng}
+&start=geo!${center[0]},${center[1]}
 &range=${range}
 &rangetype=${rangeType}`;
 
 const slider = document.querySelector('#range');
 slider.onchange = () => calculateIsoline();
 
+setRangeText();
+function setRangeText() {
+   const value = document.querySelector('#range').value;
+   const miles = (Number(value) * 0.00062137).toFixed(1);
+   document.querySelector('#range-text').innerText = miles;
+}
+
 const markers = [];
 const polygons = [];
+
+const geojsonLayer = L.layerGroup();//.addTo(map);
 fetch('fire_stations.geojson')
 .then(res => res.json())
 .then(data => {
-   data.features.forEach( feature => {
-      const [lng, lat] = feature.geometry.coordinates;
-      const marker = new H.map.Marker({lat, lng}, {volatility: true, data: feature.properties.jurisdiction});
 
-      marker.draggable = true;
+   const markers = [];
+   data.features.forEach(y => {
+      const [lat, lng] = y.geometry.coordinates
+      const marker = L.marker([lng, lat]);
+      marker.jurisdiction = y.properties.jurisdiction;
       markers.push(marker);
-      // map.addObject(marker);
-   });
+      marker.addTo(geojsonLayer);
+   })
+   // const geojson = new L.GeoJSON(data).addTo(geojsonLayer)
+   
 
    const jurisdictions = [... new Set(
       data.features.map(x => x.properties.jurisdiction)
@@ -70,65 +77,46 @@ fetch('fire_stations.geojson')
 function filter(evt) {
 
    const active = [...document.querySelectorAll('.filter')].filter(x => x.checked).map(x => x.id);
-   for (let i = 0; i < polygons.length; i++) {
-      const j = polygons[i].getData();
-      if (active.includes(j)) {
-         polygons[i].setStyle({
-            fillColor: 'rgba(74, 134, 255, 0.3)',
-            strokeColor: '#4A86FF',
-            lineWidth: 2
-         })
-      } else {
-         polygons[i].setStyle({
-            fillColor: 'rgba(74, 134, 255, 0.0)',
-            strokeColor: '#4A86FF',
-            lineWidth: 0
-         })//hide
-       }
+   
+   const polys =  polygonGroup.getLayers();
+   for (i  = 0; i < polys.length; i++) {
+      // console.log(polys[i].jurisdiction)
    }
 }
-// const group = L.layerGroup().addTo(map);
-let initial = true;
+
+const polygonGroup = L.layerGroup().addTo(map);
+
 async function calculateIsoline() {
-   // markers.forEach(m => map.removeObject(m));
-   if (initial) {
-      const lineTemp= new H.geo.LineString();
-      lineTemp.pushLatLngAlt(0,0,0);
-      lineTemp.pushLatLngAlt(1,1,0);
-      markers.forEach((m, i) => {
-         const polygon = new H.map.Polygon(lineTemp, {
-            style: {
-               fillColor: 'rgba(74, 134, 255, 0.3)',
-               strokeColor: '#4A86FF',
-               lineWidth: 2
-            },
-            data: m.getData()
-         });
-         polygons.push(polygon);
-         map.addObject(polygon);
-      })
-      initial = false;
-   }
-   
-   
+   const geoJsonPolygons = [];
+   polygonGroup.clearLayers();
+
+   const coordinates = geojsonLayer.getLayers().map(
+      x => ({jurisdiction: x.jurisdiction, coordinates: [x._latlng.lat, x._latlng.lng]})
+   )
+
    const range = document.querySelector('#range').value;
-   const isolinePromises = markers.map(x => fetch(isolineUrl(x.getGeometry(), range)).then(res => res.json()));
+   const isolinePromises = coordinates.map(x => fetch(isolineUrl(x.coordinates, range)).then(res => res.json()));
    const responses = await Promise.all(isolinePromises);
 
    responses.forEach((x,i) => {
-      const linestring = new H.geo.LineString();
       const shape = x.response.isoline[0].component[0].shape.map(z => z.split(','));
-      shape.forEach(p => linestring.pushLatLngAlt.apply(linestring, p));
-      polygons[i] = new H.map.Polygon(linestring, {
-         style: {
-            fillColor: 'rgba(74, 134, 255, 0.3)',
-            strokeColor: '#4A86FF',
-            lineWidth: 2
-         },
-         data: markers[i].getData()
-      });
-      filter();
+      const poly = L.polygon(shape, {color: '#5DDCCF', weight: 2});
+      poly.jurisdiction = coordinates[i].jurisdiction
+      poly.addTo(polygonGroup);
+      
+      
+      const geoPolygon = turf.polygon([
+         shape.map(x => [x[1], x[0]])
+      ])
+      geoJsonPolygons.push(geoPolygon)
    });
+   filter();
+   setRangeText();
+
+   createOverlaps(geoJsonPolygons)
 }
 
+function createOverlaps(polygons) {
+   console.log(polygons)
+}
 

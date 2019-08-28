@@ -1,12 +1,11 @@
 <html>
 <head>
    <title>Fire Stations</title>
-   <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
-   <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
-   <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
-   <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
-   <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+   <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+   <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
 
+   
    <style>
       body, html { border: 0; padding: 0; margin: 0; font-family: sans-serif}
       #map { width: 100vw; height: 100vh; }
@@ -23,7 +22,7 @@
 <body>
    <div id="sidebar">
       <h2>Distance</h2>
-      <input type="range" id="range" min="0" value="2500" max="5000">
+      <input type="range" id="range" min="0" value="2500" max="5000"><span id="range-text"></span>
       <h2>Jurisdictions</h2>
       <div class="filters"></div>
    </div>
