@@ -10,21 +10,72 @@
       body, html { border: 0; padding: 0; margin: 0; font-family: sans-serif}
       #map { width: 100vw; height: 100vh; }
       #sidebar {
-         width: 200px;
+         width: 250px;
          background: white;
          z-index: 500000;
          position: absolute;
          margin: 15px;
          padding: 15px;
       }
+      p {
+         font-size: 14px;
+         color: grey;
+      }
+
+      .filters {
+         height: 200px;
+         overflow-y: scroll;
+      }
+
+      .emphasis {
+         color: black;
+         font-weight: bold;
+      }
+
+      .custom .leaflet-popup-tip {
+         display: none;
+      }
+      .custom .leaflet-popup-content-wrapper {
+         background: #fff;
+         border: 1.5px solid #D3D6D8;
+         padding: 20px;
+         color: black;
+         padding: 0;
+         border-radius: 0;
+         box-shadow: none;
+         font-family: sans-serif;
+         font-size: 14px;
+      }
+
+      .key {
+         display: inline-block;
+         width: 80px;
+      }
+
+      #clear {
+         display: none;
+      }
+
+      .square {
+         height: 12px;
+         width: 12px;
+         display: inline-block;
+      }
    </style>
 </head>
 <body>
    <div id="sidebar">
-      <h2>Distance</h2>
-      <input type="range" id="range" min="0" value="2500" max="5000"><span id="range-text"></span>
-      <h2>Jurisdictions</h2>
+      <h3>Enter an address</h3>
+      <input id="address" type="text" value="150 N Orange Ave, Orlando, FL"><button id="go">Search</button><button id="clear">Clear</button>
+      <h3>Distance</h3>
+      <p>Configure a range in distance from each fire station.</p>
+      <input type="range" id="range" min="0" value="2350" max="8000"><span id="range-text"></span>
+      <h3>Jurisdictions</h3>
+      <p>Explore a single or multiple jurisdictions</p>
       <div class="filters"></div>
+      <p id="num"></p>
+      <h3>Key</h3>
+      <div class="sidebar-key"></div>
    </div>
    <div id="map"></div>
    <script src="index.js"></script>
