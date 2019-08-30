@@ -29,7 +29,11 @@ class Search {
       this.matches.forEach((s, i) => {
          const item = document.createElement('div');
          item.classList.add('item');
-         const label = s.address.houseNumber + ' ' + s.address.street + ', ' + s.address.city + ' ' + s.address.state;  
+         const label = s.address.houseNumber + ' ' + 
+            s.address.street + ', ' + 
+            s.address.city + ' ' + 
+            (s.address.state ? s.address.state: '') + ', ' + 
+            s.address.country;
          item.innerText = label;
          item.id = s.locationId;
          item.onmouseover = () => this.highlightItem(i);

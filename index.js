@@ -47,9 +47,11 @@ traffic:${'enabled'}
 
 const slider = document.querySelector('#range');
 slider.onchange = () => refresh();
+slider.oninput = setRangeText;
 
 setRangeText();
 function setRangeText() {
+   console.log('settign')
    const value = document.querySelector('#range').value;
    const miles = (Number(value) * 0.00062137).toFixed(1);
    document.querySelector('#range-text').innerText = miles + ' miles';
@@ -197,7 +199,7 @@ async function refresh() {
       map.fitBounds(polygonGroup.getBounds(), {padding: [0, 100]});
    }
    
-   setRangeText();
+   // setRangeText();
    closeLoading();
 
 }
