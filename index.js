@@ -1,27 +1,39 @@
-const here = {
-   id: 'Wf3z49YJK9ieJhsun9Wx',
-   code: '8T7Stg2Jq1qvkfBn3Za4qw',
-   apikey: 'EybNF4MkvcUj8WX1VJRKhT9dwDVz1wIHaKGF5tpqNss'
-}
+import Search from './Search.js';
+import { here } from './here.js'
+new Search();
+
 const style = 'reduced.day';
 
 const colors = {
-   exists: '#51A3DB',
-   planned: '#FF7A8E',
-   recommend: '#79F7CA',
+   exists: a => `rgba(81,163,219, ${a})`,
+   planned: a => `rgba(255, 122, 142, ${a})`,
+   recommend: a =>  `rgba(121, 247, 202, ${a})`,
 }
 
+const labels = {
+   exists: 'Existing station',
+   planned: 'Planned station',
+   recommend: 'Recommended future station'
+}
+
+
+
 document.querySelector('.sidebar-key').innerHTML = Object.keys(colors).map(key => 
-   `<div><div class="square" style="background: ${colors[key]}"></div>${key}</div>`
+   `<div class="key-item"><div class="square" style="border: 1px solid ${colors[key](1)}; background: ${colors[key](0.3)};"></div>${labels[key]}</div>`
 ).join('');
 const hereTileUrl = `https://2.base.maps.api.here.com/maptile/2.1/maptile/newest/${style}/{z}/{x}/{y}/512/png8?app_id=${here.id}&app_code=${here.code}&ppi=320`;
 
 const map = L.map('map', {
    center: [28.5906121, -81.5137384],
    zoom: 11,
-   layers: [L.tileLayer(hereTileUrl)]
+   layers: [L.tileLayer(hereTileUrl)],
+   zoomControl: false
 });
 map.attributionControl.addAttribution('&copy; HERE 2019');
+
+L.control.zoom({
+   position: 'bottomright'
+}).addTo(map)
 
 const isolineUrl = (center, range, mode = 'car', rangeType = 'distance') => 
 `https://isoline.route.api.here.com/routing/7.2/calculateisoline.json
@@ -54,7 +66,7 @@ fetch('fire_stations.geojson')
 .then(res => res.json())
 .then(data => {
 
-
+   console.log(data.features.length)
    
    data.features.forEach(y => {
       const [lat, lng] = y.geometry.coordinates;
@@ -88,11 +100,15 @@ fetch('fire_stations.geojson')
 
    jurisdictions.forEach(j => {
       const div = document.createElement('div');
+      div.classList.add('filter-item');
       div.innerHTML = `
+      
+      <label for="${j}">
       <input id="${j}" type="checkbox" name="jurisdiction" class="filter" ${j === 'Orlando' ? "checked" : ''}>
-      <label for="${j}">${j}</label>
+      ${j}
+      </label>
       `
-      document.querySelector('.filters').appendChild(div)
+      document.querySelector('.filter-items').appendChild(div)
    })
 
    refresh()
@@ -113,6 +129,7 @@ function countStations(stations) {
 
 
 async function refresh() {
+   openLoading();
    const active = [...document.querySelectorAll('.filter:checked')].map(x => x.id);
 
    const activeCount = active.map(x => counter[x]).reduce((a,b) => a + b, 0);
@@ -127,6 +144,7 @@ async function refresh() {
       ${stationText} 
       district${active.length === 1 ? '' : 's'} contain${active.length !== 1 ? '' : 's'} <span class="emphasis">${activeCount}</span> station${active.length == 1 && activeCount === 1 ? '' : 's'}.
    `
+   updateFilterText(active);
 
 
    polygonGroup.clearLayers();
@@ -157,7 +175,7 @@ async function refresh() {
 
    responses.forEach((x,i) => {
       const shape = x.response.isoline[0].component[0].shape.map(z => z.split(','));
-      const poly = L.polygon(shape, {color: colors[coordinates[i].status], weight: 2});
+      const poly = L.polygon(shape, {color: colors[coordinates[i].status](1), weight: 2});
 
       poly.jurisdiction = coordinates[i].jurisdiction;
       poly.address = coordinates[i].address;
@@ -176,48 +194,76 @@ async function refresh() {
    });
 
    if (polygonGroup.getLayers().length > 0) {
-      map.fitBounds(polygonGroup.getBounds());
+      map.fitBounds(polygonGroup.getBounds(), {padding: [0, 100]});
    }
    
-   
    setRangeText();
+   closeLoading();
 
 }
 
-
-const geocodeUrl = (query) => `\
-https://geocoder.api.here.com/6.2/geocode.json
-?searchtext=${query}
-&app_id=${here.id}
-&app_code=${here.code}
-&gen=9`;
-
-document.querySelector('#go').onclick = async (evt) => {
+function addMarker(latitude, longitude) {
    markerLayer.clearLayers();
-   const value = document.querySelector('#address').value;
-   const response = await fetch( geocodeUrl(value) ).then(res => res.json());
-   const {Latitude, Longitude } = response.Response.View[0].Result[0].Location.DisplayPosition;
-   L.marker([Latitude, Longitude]).addTo(markerLayer);
-   map.flyTo([Latitude, Longitude], 15);
-   document.querySelector('#clear').style.display = 'inline-block';
+   L.marker([latitude, longitude]).addTo(markerLayer);
+   map.flyTo([latitude, longitude], 15);
 }
-document.querySelector('#clear').onclick = () => {
-   markerLayer.clearLayers();
-   document.querySelector('#clear').style.display = 'none';
-}
+
 
 function formatTooltip({jurisdiction, address, status, _latlngs}) {
-   // var polygon = turf.polygon([[[125, -15], [113, -22], [154, -27], [144, -15], [125, -15]]]);
-
-   // var area = turf.area(polygon);
    const geojsonPolygon = turf.lineToPolygon(turf.lineString(_latlngs[0].map(x => [x.lng, x.lat])))
-
    const areaMilesSquared = turf.area(geojsonPolygon) / 2.59e+6;
-   const html = `\
+   return `\
    <div><span class="key">Jurisdiction</span>${jurisdiction}</div>
    <div><span class="key">Address</span>${address}</div>
    <div><span class="key">Status</span>${status}</div>
-   <div><span class="key">Area</span>${areaMilesSquared.toFixed(2)} miles^2</div>
-   `
-   return html;
+   <div><span class="key">Area</span>${areaMilesSquared.toFixed(2)} miles^2</div>`
 }
+let filterOpen = false;
+
+
+document.querySelector('.filters').onclick = () => {
+   filterOpen = !filterOpen;
+   if (filterOpen) {
+      openFilter();
+   } else {
+      closeFilter();
+   }
+}
+
+function closeFilter() {
+   document.querySelector('.filter-items').style.display = 'none';
+}
+
+function openFilter() {
+   document.querySelector('.filter-items').style.display = 'block';
+}
+
+function updateFilterText(active) {
+   const text = active.join(', ');
+   if (active.length === 0) {
+      document.querySelector('.filters').innerText = 'No jurisdictions selected';
+   } else if (text.length <= 32) {
+      document.querySelector('.filters').innerText = text;
+   } else {
+      document.querySelector('.filters').innerText = active.length + ' jurisdiction' + (active.length > 1 ? 's' : '') + ' selected';
+   }
+}
+
+document.body.onkeydown = (evt) => {
+   const { key } = evt;
+   console.log(key);
+   if (key === 'Escape') {
+      closeFilter();
+   }
+}
+
+function openLoading() {
+   document.querySelector('#loading-container').style.opacity = 1;
+}
+
+function closeLoading() {
+   document.querySelector('#loading-container').style.opacity = 0;
+}
+
+
+export { addMarker };
