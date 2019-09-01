@@ -100,13 +100,24 @@ p {
    display: flex;
    align-items: center;
 }
+
 .square {
   height: 14px;
   width: 14px;
   display: inline-block;
   border-radius: var(--border-radius);
-  margin-right: 5px;
+  margin-right: 8px;
 }
+
+.circle {
+   height: 12px;
+   width: 12px;
+   display: inline-block;
+   border-radius: 50%;
+   margin-right: 9px;
+   margin-left: 3px;
+   background: black;
+ }
 
 
 

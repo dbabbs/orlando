@@ -11,9 +11,9 @@ const colors = {
 }
 
 const labels = {
-   exists: 'Existing station',
-   planned: 'Planned station',
-   recommend: 'Recommended future station'
+   exists: 'Existing station range',
+   planned: 'Planned station range',
+   recommend: 'Recommended future station range'
 }
 
 
@@ -21,6 +21,9 @@ const labels = {
 document.querySelector('.sidebar-key').innerHTML = Object.keys(colors).map(key => 
    `<div class="key-item"><div class="square" style="border: 1px solid ${colors[key](1)}; background: ${colors[key](0.3)};"></div>${labels[key]}</div>`
 ).join('');
+document.querySelector('.sidebar-key').innerHTML += 
+`<div class="key-item"><div class="circle"></div>Station location</div>`
+
 const hereTileUrl = `https://2.base.maps.api.here.com/maptile/2.1/maptile/newest/${style}/{z}/{x}/{y}/512/png8?app_id=${here.id}&app_code=${here.code}&ppi=320`;
 
 const map = L.map('map', {
