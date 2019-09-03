@@ -38,7 +38,7 @@ L.control.zoom({
    position: 'bottomright'
 }).addTo(map)
 
-const isolineUrl = (center, range, mode = 'car', rangeType = 'distance') => 
+const isolineUrl = (center, range, rangeType, mode = 'car') => 
 `https://isoline.route.api.here.com/routing/7.2/calculateisoline.json
 ?app_id=${here.id}
 &app_code=${here.code}
@@ -50,14 +50,24 @@ traffic:${'enabled'}
 
 const slider = document.querySelector('#range');
 slider.onchange = () => refresh();
+
+const rangeTypeButtons = document.querySelectorAll('.range-type');
+rangeTypeButtons.forEach(t => t.onchange = () => refresh())
+
 slider.oninput = setRangeText;
 
 setRangeText();
 function setRangeText() {
-   console.log('settign')
+   const rangeType = document.querySelector('#time').checked ? 'time' : 'distance';
    const value = document.querySelector('#range').value;
-   const miles = (Number(value) * 0.00062137).toFixed(1);
-   document.querySelector('#range-text').innerText = miles + ' miles';
+   if (rangeType === 'distance') {
+      const miles = (Number(value) * 0.00062137).toFixed(1);
+      document.querySelector('#range-text').innerText = miles + ' miles';
+   } else {
+      const minutes = (Number(value) / 60).toFixed(1);
+      document.querySelector('#range-text').innerText = minutes + ' mins';
+   }
+   
 }
 
 const points = [];
@@ -156,7 +166,6 @@ async function refresh() {
    pointLayer.clearLayers();
    points.forEach(p => {
       if (active.includes(p.jurisdiction)) {
-         
          p.addTo(pointLayer)
       }
    })
@@ -175,7 +184,12 @@ async function refresh() {
       )
 
    const range = document.querySelector('#range').value;
-   const isolinePromises = coordinates.map(x => fetch(isolineUrl(x.coordinates, range)).then(res => res.json()));
+   const rangeType = document.querySelector('#time').checked ? 'time' : 'distance';
+
+   setMax(rangeType);
+   setRangeText();
+   console.log(rangeType);
+   const isolinePromises = coordinates.map(x => fetch(isolineUrl(x.coordinates, range, rangeType)).then(res => res.json()));
    const responses = await Promise.all(isolinePromises);
 
    responses.forEach((x,i) => {
@@ -236,21 +250,23 @@ document.querySelector('.filters').onclick = () => {
 }
 
 function closeFilter() {
+   document.querySelector('.filters img').style.transform ='rotate(-180deg)';
    document.querySelector('.filter-items').style.display = 'none';
 }
 
 function openFilter() {
+   document.querySelector('.filters img').style.transform ='rotate(180deg)';
    document.querySelector('.filter-items').style.display = 'block';
 }
 
 function updateFilterText(active) {
    const text = active.join(', ');
    if (active.length === 0) {
-      document.querySelector('.filters').innerText = 'No jurisdictions selected';
+      document.querySelector('.filter-text').innerText = 'No jurisdictions selected';
    } else if (text.length <= 32) {
-      document.querySelector('.filters').innerText = text;
+      document.querySelector('.filter-text').innerText = text;
    } else {
-      document.querySelector('.filters').innerText = active.length + ' jurisdiction' + (active.length > 1 ? 's' : '') + ' selected';
+      document.querySelector('.filter-text').innerText = active.length + ' jurisdiction' + (active.length > 1 ? 's' : '') + ' selected';
    }
 }
 
@@ -270,5 +286,13 @@ function closeLoading() {
    document.querySelector('#loading-container').style.opacity = 0;
 }
 
+
+function setMax(rangeType) {
+   if (rangeType === 'time') {
+      document.querySelector('#range').max = 600;
+   } else if(rangeType === 'distance') {
+      document.querySelector('#range').max = 6000;
+   }
+}
 
 export { addMarker };
