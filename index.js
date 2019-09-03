@@ -255,7 +255,7 @@ function closeFilter() {
 }
 
 function openFilter() {
-   document.querySelector('.filters img').style.transform ='rotate(180deg)';
+   document.querySelector('.filters img').style.transform ='';
    document.querySelector('.filter-items').style.display = 'block';
 }
 
