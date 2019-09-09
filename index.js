@@ -218,7 +218,7 @@ async function refresh() {
    });
 
    if (polygonGroup.getLayers().length > 0) {
-      map.fitBounds(polygonGroup.getBounds(), {padding: [0, 100]});
+      map.flyToBounds(polygonGroup.getBounds(), {padding: [0, 100]});
    }
    
    // setRangeText();
