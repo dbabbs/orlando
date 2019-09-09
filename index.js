@@ -254,14 +254,29 @@ document.querySelector('.filters').onclick = () => {
    }
 }
 
+
+
 function closeFilter() {
    document.querySelector('.filters img').style.transform ='rotate(-180deg)';
-   document.querySelector('.filter-items').style.display = 'none';
+   document.querySelector('.filter-items').style.height = '0px';
 }
 
+let maxHeight = '200px';
+let initial = true;
 function openFilter() {
+
+   if (initial) {
+      initial = false;
+      const filterItems = document.querySelector('.filter-items');
+
+      const y = filterItems.getBoundingClientRect().y;
+
+      maxHeight = `calc(100vh - ${y}px - var(--larger-spacing) * 2)`;
+   }
    document.querySelector('.filters img').style.transform ='';
-   document.querySelector('.filter-items').style.display = 'block';
+   document.querySelector('.filter-items').style.height = maxHeight;
+   
+
 }
 
 function updateFilterText(active) {
@@ -316,5 +331,12 @@ document.querySelector('#select-none').onclick = () => {
    console.log(filters);
    refresh();
 }
+
+// const filterItems = document.querySelector('.filter-items');
+// console.log(
+//    filterItems.getBoundingClientRect()
+// )
+// filterItems.style.height = '300px';
+
 
 export { addMarker };

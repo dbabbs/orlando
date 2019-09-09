@@ -230,14 +230,16 @@ FILTER ITEMS
    user-select: none;
 }
 .filter-items {
-   display: none;
+   /* display: none; */
+   height: 0;
    position: absolute; 
    width: calc(100% - 2 * var(--larger-spacing));
-   height: 200px; 
+   /* height: 200px;  */
    box-sizing: border-box;
    box-shadow: var(--shadow);
    /* border: 1px solid black; */
    overflow-y: scroll;
+   transition: .2s all ease-in-out;
 }
 
 
