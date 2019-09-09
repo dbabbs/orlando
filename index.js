@@ -164,7 +164,7 @@ async function refresh() {
    //    ${stationText} 
    //    district${active.length === 1 ? '' : 's'} contain${active.length !== 1 ? '' : 's'} <span class="emphasis">${activeCount}</span> station${active.length == 1 && activeCount === 1 ? '' : 's'}.
    // `
-   document.querySelector('#num').innerHTML = `<span class="emphasis">${active.length}</span> station${active.length === 1 ? '' : 's'} visible in the map view.`;
+   document.querySelector('#num').innerHTML = `<span class="emphasis">${activeCount}</span> station${activeCount === 1 ? '' : 's'} visible in the map view.`;
    updateFilterText(active);
 
 
@@ -218,7 +218,7 @@ async function refresh() {
    });
 
    if (polygonGroup.getLayers().length > 0) {
-      map.flyToBounds(polygonGroup.getBounds(), {padding: [0, 100]});
+      map.flyToBounds(polygonGroup.getBounds());
    }
    
    // setRangeText();
@@ -237,10 +237,19 @@ function formatTooltip({jurisdiction, address, status, _latlngs}) {
    const geojsonPolygon = turf.lineToPolygon(turf.lineString(_latlngs[0].map(x => [x.lng, x.lat])))
    const areaMilesSquared = turf.area(geojsonPolygon) / 2.59e+6;
    return `\
-   <div><span class="key">Jurisdiction</span>${jurisdiction}</div>
-   <div><span class="key">Address</span>${address}</div>
-   <div><span class="key">Status</span>${status}</div>
-   <div><span class="key">Area</span>${areaMilesSquared.toFixed(2)} miles^2</div>`
+   <div class="key">
+      <div>Jurisdiction</div>
+      <div>Status</div>
+      <div>Area</div>
+      <div>Address</div>
+   </div>
+
+   <div>
+      <div>${jurisdiction}</div>
+      <div>${status}</div>
+      <div>${areaMilesSquared.toFixed(2)} square miles</div>
+      <div>${address}</div>
+   </div>`
 }
 let filterOpen = false;
 
@@ -264,19 +273,14 @@ function closeFilter() {
 let maxHeight = '200px';
 let initial = true;
 function openFilter() {
-
+   const filterItems = document.querySelector('.filter-items');
    if (initial) {
       initial = false;
-      const filterItems = document.querySelector('.filter-items');
-
       const y = filterItems.getBoundingClientRect().y;
-
       maxHeight = `calc(100vh - ${y}px - var(--larger-spacing) * 2)`;
    }
-   document.querySelector('.filters img').style.transform ='';
-   document.querySelector('.filter-items').style.height = maxHeight;
-   
-
+   document.querySelector('.filters img').style.transform = 'none';
+   filterItems.style.height = maxHeight;
 }
 
 function updateFilterText(active) {
