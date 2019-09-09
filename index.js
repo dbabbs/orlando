@@ -5,7 +5,7 @@ new Search();
 const style = 'reduced.day';
 
 const colors = {
-   exists: a => `rgba(81,163,219, ${a})`,
+   exists: a => `rgba(101,99,226, ${a})`,
    planned: a => `rgba(255, 122, 142, ${a})`,
    recommend: a =>  `rgba(121, 247, 202, ${a})`,
 }
@@ -26,13 +26,18 @@ document.querySelector('.sidebar-key').innerHTML +=
 
 const hereTileUrl = `https://2.base.maps.api.here.com/maptile/2.1/maptile/newest/${style}/{z}/{x}/{y}/512/png8?app_id=${here.id}&app_code=${here.code}&ppi=320`;
 
+
+const tangram = Tangram.leafletLayer({
+   scene: 'scene.yaml'
+})
+
 const map = L.map('map', {
    center: [28.5906121, -81.5137384],
    zoom: 11,
-   layers: [L.tileLayer(hereTileUrl)],
+   layers: [tangram],
    zoomControl: false
 });
-map.attributionControl.addAttribution('&copy; HERE 2019');
+map.attributionControl.addAttribution('Tangram | &copy; HERE 2019');
 
 L.control.zoom({
    position: 'bottomright'

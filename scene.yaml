@@ -1,0 +1,131 @@
+cameras:
+    camera1:
+        type: perspective
+sources:
+    omv:
+        type: MVT
+        url: https://xyz.api.here.com/tiles/herebase.02/{z}/{x}/{y}/omv
+        url_params:
+            access_token: ASCBZnCcvEMa-vbk9JXixN8
+        max_zoom: 16
+global:
+    language: en
+    language_text_source: "function() {\n    // Use preferred language label if available\n    return (global.language && feature['name:'+global.language]) || feature.name;\n}\n"
+scene:
+    background:
+        color: '#E8EEF1'
+layers:
+    places:
+        data:
+            source: omv
+        city-points:
+            filter: {kind: locality, kind_detail: city, $zoom: {max: 18}}
+            draw: 
+                text: 
+                    text_source: global.language_text_source
+                    priority: 1
+                    order: 10000
+                    font: 
+                        family: Lato
+                        fill: [0.388, 0.443, 0.478, 1.00]
+                        stroke:
+                            color: white
+                            width: 4
+                        size: [[4, 15px], [8, 20px], [12, 22px]]
+                        buffer: 5px
+        neighborhoods:
+            filter: [{kind: [neighbourhood, macrohood], $zoom: {min: 11}}, {kind: microhood, $zoom: {min: 15}}]
+            draw:
+                text:
+                    text_source: global.language_text_source
+                    priority: 10
+                    order: 999
+                    font:
+                        family: Lato
+                        fill: [0.565, 0.647, 0.698, 1.00]
+                        stroke:
+                            color: white
+                            width: 4
+                        size: [[4, 10px], [8, 14px],[12, 14px]]
+                        buffer: 10px
+    earth:
+        data:
+            source: omv
+        draw:
+            polygons:
+                order: function() { return feature.sort_rank; }
+                color: black
+    landuse:
+        data: 
+            source: omv
+        park:
+            filter:
+                kind: park
+            draw:
+                polygons:
+                    order: function() { return feature.sort_rank; }
+                    color: '#BFEBCB'
+        university:
+            filter:
+                kind: university
+            draw:
+                polygons:
+                    order: function() { return feature.sort_rank; }
+                    color: '#FFFEE2'
+        aerodome:
+            filter:
+                kind: aerodome
+            draw:
+                polygons:
+                    order: function() { return feature.sort_rank; }
+                    color: black
+
+    water:
+        data: { source: omv }
+        draw:
+            polygons:
+                order: function() { return feature.sort_rank; }
+                color: '#C1E0F0'
+
+    roads:
+        data:
+            source: omv
+        filter:
+            not: { kind: [path, rail, ferry] }
+        draw:
+            lines:
+                order: function() { return feature.sort_rank; }
+                color: white
+                width: [[12, 18], [18, 11]]
+                cap: round
+        highway:
+            filter:
+                kind: highway
+            draw:
+                lines:
+                    order: function() { return feature.sort_rank; }
+                    color: white
+                    width: [[3, 8000], [8, 1200], [10, 700], [12, 200],[14,50], [18, 30]]
+                    outline:
+                        color: [0.902, 0.902, 0.902, 1.00]
+                        width: [[8, 10], [18, 5]]
+        minor_road:
+            filter:
+                kind: minor_road
+            draw:
+                lines:
+                    order: function() { return feature.sort_rank; }
+                    color: white
+                    width: [[14, 12], [18, 10]]
+
+    buildings:
+        data: { source: omv }
+        draw:
+            polygons:
+                order: function() { return feature.sort_rank; }
+                color: '#E9EBEB'
+        3d-buildings:
+            filter: { $zoom: { min: 15 } }
+            draw:
+                polygons:
+                    extrude: function () { return feature.height > 20 || $zoom >= 16; }
