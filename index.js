@@ -69,7 +69,7 @@ function setRangeText() {
       const miles = (Number(value) * 0.00062137).toFixed(1);
       document.querySelector('#range-text').innerText = miles + ' miles';
    } else {
-      const minutes = (Number(value) / 60).toFixed(1);
+      const minutes = Number.isInteger(Number(value / 60)) ? Number(value / 60) : (Number(value) / 60).toFixed(1);
       document.querySelector('#range-text').innerText = minutes + ' mins';
    }
    
