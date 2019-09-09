@@ -86,8 +86,6 @@ fetch('fire_stations.geojson')
 .then(res => res.json())
 .then(data => {
 
-   console.log(data.features.length)
-   
    data.features.forEach(y => {
       const [lat, lng] = y.geometry.coordinates;
       const point = L.circleMarker([lng, lat],{
@@ -193,7 +191,6 @@ async function refresh() {
 
    setMax(rangeType);
    setRangeText();
-   console.log(rangeType);
    const isolinePromises = coordinates.map(x => fetch(isolineUrl(x.coordinates, range, rangeType)).then(res => res.json()));
    const responses = await Promise.all(isolinePromises);
 
@@ -277,7 +274,6 @@ function updateFilterText(active) {
 
 document.body.onkeydown = (evt) => {
    const { key } = evt;
-   console.log(key);
    if (key === 'Escape') {
       closeFilter();
    }
