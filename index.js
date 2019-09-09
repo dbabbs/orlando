@@ -10,6 +10,8 @@ const colors = {
    recommend: a =>  `rgba(121, 247, 202, ${a})`,
 }
 
+const pinColor = 'black'; //'#C92B2E'
+
 const labels = {
    exists: 'Existing station range',
    planned: 'Planned station range',
@@ -22,7 +24,7 @@ document.querySelector('.sidebar-key').innerHTML = Object.keys(colors).map(key =
    `<div class="key-item"><div class="square" style="border: 1px solid ${colors[key](1)}; background: ${colors[key](0.3)};"></div>${labels[key]}</div>`
 ).join('');
 document.querySelector('.sidebar-key').innerHTML += 
-`<div class="key-item"><div class="circle"></div>Station location</div>`
+`<div class="key-item"><div class="circle" style="background: ${pinColor}"></div>Station location</div>`
 
 const hereTileUrl = `https://2.base.maps.api.here.com/maptile/2.1/maptile/newest/${style}/{z}/{x}/{y}/512/png8?app_id=${here.id}&app_code=${here.code}&ppi=320`;
 
@@ -90,8 +92,8 @@ fetch('fire_stations.geojson')
       const [lat, lng] = y.geometry.coordinates;
       const point = L.circleMarker([lng, lat],{
          radius: 3,
-         fillColor: "#000",
-         color: "#000",
+         fillColor: pinColor,
+         color: pinColor,
          weight: 1,
          opacity: 1,
          fillOpacity: 0.8
@@ -158,10 +160,11 @@ async function refresh() {
    } else {
       stationText = active.slice(0, active.length - 1).join(', ') + ' and ' + active[active.length -1]
    }
-   document.querySelector('#num').innerHTML = `\
-      ${stationText} 
-      district${active.length === 1 ? '' : 's'} contain${active.length !== 1 ? '' : 's'} <span class="emphasis">${activeCount}</span> station${active.length == 1 && activeCount === 1 ? '' : 's'}.
-   `
+   // document.querySelector('#num').innerHTML = `\
+   //    ${stationText} 
+   //    district${active.length === 1 ? '' : 's'} contain${active.length !== 1 ? '' : 's'} <span class="emphasis">${activeCount}</span> station${active.length == 1 && activeCount === 1 ? '' : 's'}.
+   // `
+   document.querySelector('#num').innerHTML = `<span class="emphasis">${active.length}</span> station${active.length === 1 ? '' : 's'} visible in the map view.`;
    updateFilterText(active);
 
 
@@ -294,6 +297,24 @@ function setMax(rangeType) {
    } else if(rangeType === 'distance') {
       document.querySelector('#range').max = 6000;
    }
+}
+
+document.querySelector('#select-all').onclick = () => {
+   const filters = document.querySelectorAll('.filter');
+   filters.forEach(f => {
+      f.checked = true;
+   });
+   console.log(filters);
+   refresh();
+}
+
+document.querySelector('#select-none').onclick = () => {
+   const filters = document.querySelectorAll('.filter');
+   filters.forEach(f => {
+      f.checked = false;
+   });
+   console.log(filters);
+   refresh();
 }
 
 export { addMarker };

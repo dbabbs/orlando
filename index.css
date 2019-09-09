@@ -250,6 +250,11 @@ FILTER ITEMS
    display: flex;
 }
 
+.select-text {
+   padding: 10px;
+   cursor: pointer;
+}
+
 .filter-item:hover {
    background: var(--light-background);
 }
@@ -308,7 +313,7 @@ FILTER ITEMS
 .range {
    -webkit-appearance: none;  /* Override default CSS styles */
    appearance: none;
-   height: 4px; /* Specified height */
+   height: 3px; /* Specified height */
    background: #d3d3d3; /* Grey background */
    outline: none;
    border-radius: var(--border-radius);
@@ -317,11 +322,11 @@ FILTER ITEMS
 .range::-webkit-slider-thumb {
    -webkit-appearance: none; /* Override default look */
    appearance: none;
-   width: 13px; /* Set a specific slider handle width */
-   height: 13px; /* Slider handle height */
+   width: 6px; /* Set a specific slider handle width */
+   height: 15px; /* Slider handle height */
    background: black; /* Green background */
    cursor: pointer; 
-   border-radius: 50%;/* Cursor on hover */
+   border-radius: 2px;/* Cursor on hover */
  }
 
 
