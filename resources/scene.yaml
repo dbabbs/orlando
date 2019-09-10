@@ -74,14 +74,7 @@ layers:
                             width: 3
                         size: [[4, 10px], [8, 12px],[12, 12px]]
                     buffer: 10px
- 
-    earth:
-        data:
-            source: omv
-        draw:
-            polygons:
-                order: function() { return feature.sort_rank; }
-                color: black
+
     landuse:
         data: 
             source: omv
