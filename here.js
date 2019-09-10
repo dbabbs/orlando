@@ -1,20 +1,26 @@
-const here = {
-   id: 'Wf3z49YJK9ieJhsun9Wx',
-   code: '8T7Stg2Jq1qvkfBn3Za4qw',
-   apikey: 'EybNF4MkvcUj8WX1VJRKhT9dwDVz1wIHaKGF5tpqNss'
-}
+import { credentials } from './config.js';
 
 const autocompleteGeocodeUrl = (query, prox) => 
 `https://autocomplete.geocoder.api.here.com/6.2/suggest.json
-?app_id=${here.id}
-&app_code=${here.code}
+?app_id=${credentials.id}
+&app_code=${credentials.code}
 &query=${query}
 &prox=${prox}`;
 
 const geocodeUrl = (id) => 
 `https://geocoder.api.here.com/6.2/geocode.json
 ?locationid=${id}
-&app_id=${here.id}
-&app_code=${here.code}`
+&app_id=${credentials.id}
+&app_code=${credentials.code}`;
 
-export { autocompleteGeocodeUrl, geocodeUrl, here }
+const isolineUrl = (center, range, rangeType, mode = 'car') => 
+`https://isoline.route.api.here.com/routing/7.2/calculateisoline.json
+?app_id=${credentials.id}
+&app_code=${credentials.code}
+&mode=shortest;${mode};
+traffic:${'enabled'}
+&start=geo!${center[0]},${center[1]}
+&range=${range}
+&rangetype=${rangeType}`;
+
+export { autocompleteGeocodeUrl, geocodeUrl, isolineUrl}

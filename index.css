@@ -162,7 +162,8 @@ SEARCH CONTAINER
    height: 20px;
    color: lightgray;
    user-select: none;
-
+   -moz-user-select: none;
+   -webkit-user-select: none;
 }
 
 
@@ -237,6 +238,8 @@ FILTER ITEMS
 .filters img {
    transition: .3s all;
    user-select: none;
+   -moz-user-select: none;
+   -webkit-user-select: none;
    height: 20px;
 }
 .filter-items {
@@ -250,6 +253,7 @@ FILTER ITEMS
    /* border: 1px solid black; */
    overflow-y: scroll;
    transition: .2s all ease-in-out;
+   max-height: 350px;
 }
 
 
@@ -305,8 +309,6 @@ FILTER ITEMS
    width: 30px;
 }
 
-
-
 #range {
    flex: 1;
 }
@@ -323,29 +325,33 @@ FILTER ITEMS
 }
 
 .range {
-   -webkit-appearance: none;  /* Override default CSS styles */
+   -webkit-appearance: none;  
+   -moz-appearance: none;
    appearance: none;
-   height: 3px; /* Specified height */
-   background: #d3d3d3; /* Grey background */
+   height: 3px; 
+   background: #d3d3d3;
    outline: none;
    border-radius: var(--border-radius);
 }
 
 .range::-webkit-slider-thumb {
-   -webkit-appearance: none; /* Override default look */
+   -webkit-appearance: none;
+   -moz-appearance: none;
    appearance: none;
-   width: 6px; /* Set a specific slider handle width */
-   height: 15px; /* Slider handle height */
-   background: black; /* Green background */
+   width: 6px;
+   height: 15px;
+   background: black; 
    cursor: pointer; 
-   border-radius: 2px;/* Cursor on hover */
- }
+   border-radius: 2px;
+}
 
-
-
-
-
-
+.range::-moz-range-thumb {
+   width: 6px;
+   height: 15px;
+   background: black; 
+   cursor: pointer; 
+   border-radius: 2px;
+}
 
  /*
 
@@ -367,6 +373,8 @@ FILTER ITEMS
    cursor: pointer;
    /* font-size: 22px; */
    user-select: none;
+   -moz-user-select: none;
+   -webkit-user-select: none;
    font-size: var(--font-size);
 }
 
