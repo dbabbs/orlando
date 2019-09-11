@@ -1,5 +1,5 @@
 import { autocompleteGeocodeUrl, geocodeUrl } from './here.js';
-import { addMarker } from './index.js';
+import { addMarker } from './app.js';
 class Search {
    constructor() {
       this.container = document.querySelector('#search-container');

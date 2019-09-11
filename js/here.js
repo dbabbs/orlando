@@ -23,4 +23,4 @@ traffic:${'enabled'}
 &range=${range}
 &rangetype=${rangeType}`;
 
-export { autocompleteGeocodeUrl, geocodeUrl, isolineUrl}
+export { autocompleteGeocodeUrl, geocodeUrl, isolineUrl }

@@ -1,16 +1,12 @@
 import Search from './Search.js';
-import { colors, pinColor, labels, scene } from './config.js';
+import { colors, pinColor, scene } from './config.js';
 import { isolineUrl } from './here.js';
 import { $, $$, openLoading, closeLoading, setMax, openFilter, 
-   closeFilter, updateFilterText } from './helpers.js';
+   closeFilter, updateFilterText, initializeSidebar, setRangeText
+} from './helpers.js';
 
-   new Search();
 
-$('.sidebar-key').innerHTML = Object.keys(colors).map(key => 
-   `<div class="key-item"><div class="square" style="border: 1px solid ${colors[key](1)}; background: ${colors[key](0.3)};"></div>${labels[key]}</div>`
-).join('');
-$('.sidebar-key').innerHTML += 
-`<div class="key-item"><div class="circle" style="background: ${pinColor}"></div>Station location</div>`
+
 
 const map = L.map('map', {
    center: [28.480057258090312, -81.35272980000002],
@@ -21,28 +17,19 @@ const map = L.map('map', {
 map.attributionControl.addAttribution('Tangram | &copy; HERE 2019');
 L.control.zoom({
    position: 'bottomright'
-}).addTo(map)
+}).addTo(map);
+
+new Search();
+initializeSidebar();
 
 const slider = $('#range');
 slider.onchange = () => refresh('slider');
-
-const rangeTypeButtons = $$('.range-type');
-rangeTypeButtons.forEach(t => t.onchange = () => refresh())
-
 slider.oninput = setRangeText;
 
+$$('.range-type').forEach(t => t.onchange = () => refresh('range-type'))
+
 setRangeText();
-function setRangeText() {
-   const rangeType = $('#time').checked ? 'time' : 'distance';
-   const value = $('#range').value;
-   if (rangeType === 'distance') {
-      const miles = (Number(value) * 0.00062137).toFixed(1);
-      $('#range-text').innerText = miles + ' miles';
-   } else {
-      const minutes = Number.isInteger(Number(value / 60)) ? Number(value / 60) : (Number(value) / 60).toFixed(1);
-      $('#range-text').innerText = minutes + ' mins';
-   }
-}
+
 
 const points = [];
 const pointLayer = L.layerGroup().addTo(map);
@@ -95,7 +82,7 @@ function countStations(stations) {
    stations.forEach(s => counter[s] = counter[s] === undefined ? 1 : counter[s] + 1)
 }
 
-async function refresh(from = 'radio') {
+async function refresh(from = 'filter') {
    openLoading();
    const active = [...$$('.filter:checked')].map(x => x.id);
 
@@ -148,8 +135,8 @@ async function refresh(from = 'radio') {
       poly.addTo(polygonGroup);
    });
 
-   if (polygonGroup.getLayers().length > 0 && from !== 'slider') {
-      map.flyToBounds(polygonGroup.getBounds());
+   if (polygonGroup.getLayers().length > 0 && from == 'filter') {
+      map.flyToBounds(polygonGroup.getBounds(), {padding: [140, 140]});
    }
    closeLoading();
 }
