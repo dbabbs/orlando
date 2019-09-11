@@ -130,7 +130,7 @@ async function refresh(from = 'filter') {
             .openOn(map);
       });
       poly.on('mouseout', () => {
-         // map.closePopup();
+         map.closePopup();
       });
       poly.addTo(polygonGroup);
    });
