@@ -1,3 +1,5 @@
+import { colors, labels, pinColor } from './config.js';
+
 const $ = q => document.querySelector(q);
 
 const $$ = q => document.querySelectorAll(q);
@@ -43,6 +45,26 @@ const updateFilterText = active => {
    }
 }
 
+const initializeSidebar = () =>{
+   $('.sidebar-key').innerHTML = Object.keys(colors).map(key => 
+      `<div class="key-item"><div class="square" style="border: 1px solid ${colors[key](1)}; background: ${colors[key](0.3)};"></div>${labels[key]}</div>`
+   ).join('');
+   $('.sidebar-key').innerHTML += 
+   `<div class="key-item"><div class="circle" style="background: ${pinColor}"></div>Station location</div>`   
+}
+
+const setRangeText = () => {
+   const rangeType = $('#time').checked ? 'time' : 'distance';
+   const value = $('#range').value;
+   if (rangeType === 'distance') {
+      const miles = (Number(value) * 0.00062137).toFixed(1);
+      $('#range-text').innerText = miles + ' miles';
+   } else {
+      const minutes = Number.isInteger(Number(value / 60)) ? Number(value / 60) : (Number(value) / 60).toFixed(1);
+      $('#range-text').innerText = minutes + ' mins';
+   }
+}
+
 export { 
    $, 
    $$, 
@@ -51,5 +73,7 @@ export {
    setMax,
    openFilter,
    closeFilter,
-   updateFilterText
+   updateFilterText,
+   initializeSidebar,
+   setRangeText
 }
