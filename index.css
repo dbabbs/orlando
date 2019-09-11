@@ -71,6 +71,10 @@ p {
   font-weight: bold;
 }
 
+.leaflet-popup {
+   transition: none;
+}
+
 .custom .leaflet-popup-tip {
   display: none;
 }
@@ -93,7 +97,6 @@ p {
    color: grey;
    display: grid;
    grid-template-columns: 80px 1fr;
-   
 }
 
 .key {

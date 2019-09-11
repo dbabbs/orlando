@@ -143,7 +143,7 @@ async function refresh(from = 'radio') {
             .openOn(map);
       });
       poly.on('mouseout', () => {
-         map.closePopup();
+         // map.closePopup();
       });
       poly.addTo(polygonGroup);
    });
