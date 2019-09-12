@@ -27,7 +27,7 @@ const openFilter = () => {
    const filterItems = $('.filter-items');
    if (initial) {
       initial = false;
-      const y = filterItems.getBoundingClientRect().y;
+      const { y } = filterItems.getBoundingClientRect();
       maxHeight = `calc(100vh - ${y}px - var(--larger-spacing) * 2)`;
    }
    $('.filters img').style.transform = 'none';
