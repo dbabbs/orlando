@@ -132,15 +132,21 @@ async function refresh(from = 'filter') {
       poly.address = coordinates[i].address;
       poly.status = coordinates[i].status;
       poly.name = coordinates[i].name;
+
+
+      var popup = L.popup({className: 'custom', closeButton: false});
+      poly.bindPopup(popup);
       poly.on('mouseover', e => {
          console.log(e)
          e.target.setStyle({
-            fillOpacity: 0.3
+            fillOpacity: 0.4
          })
-         L.popup({className: 'custom', closeButton: false})
-            .setLatLng(e.latlng)
-            .setContent(formatTooltip(poly))
-            .openOn(map);
+         // L.popup({className: 'custom', closeButton: false})
+         //    .setLatLng(e.latlng)
+         //    .setContent(formatTooltip(poly))
+         //    .openOn(map);
+         var popup = e.target.getPopup();
+         popup.setLatLng(e.latlng).setContent(formatTooltip(poly)).openOn(map);
          // console.log(e);
          // showTooltip({
          //    x: e.originalEvent.clientX,
@@ -167,13 +173,17 @@ async function refresh(from = 'filter') {
          //    y: e.originalEvent.clientY,
          //    content: formatTooltip(poly)
          // })
-         console.log('inside')
+         // e.target.closePopup();
+         var popup = e.target.getPopup();
+         popup.setLatLng(e.latlng).openOn(map);
+         console.log(e.latlng)
       })
       poly.on('mouseout', e => {
          e.target.setStyle({
             fillOpacity: 0.2
          })
-         map.closePopup();
+         e.target.closePopup();
+         // map.closePopup();
          // // closeTooltip();
          // tooltip.style.opacity = '0';
          // console.log('leave')
