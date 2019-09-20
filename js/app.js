@@ -173,7 +173,7 @@ async function refresh(from = 'filter') {
          e.target.setStyle({
             fillOpacity: 0.2
          })
-         // map.closePopup();
+         map.closePopup();
          // // closeTooltip();
          // tooltip.style.opacity = '0';
          // console.log('leave')
