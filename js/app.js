@@ -5,7 +5,7 @@ import { $, $$, openLoading, closeLoading, setMax, openFilter,
    closeFilter, updateFilterText, initializeSidebar, setRangeText
 } from './helpers.js';
 
-
+const tooltip = $('#tooltip');
 
 
 const map = L.map('map', {
@@ -38,6 +38,8 @@ const markerLayer = L.layerGroup().addTo(map)
 
 async function start() {
    const data = await fetch('data/fire_stations.geojson').then(res => res.json());
+   
+   console.table([...new Set(data.features.map(x => x.properties.status))])
    data.features.forEach(y => {
       const [lat, lng] = y.geometry.coordinates;
       const point = L.circleMarker([lng, lat], {
@@ -51,6 +53,7 @@ async function start() {
       point.jurisdiction = y.properties.jurisdiction;
       point.address = y.properties.address;
       point.status = y.properties.status;
+      point.name = y.properties.station;
       points.push(point);
    });
    
@@ -105,7 +108,8 @@ async function refresh(from = 'filter') {
          jurisdiction: x.jurisdiction, 
          coordinates: [x._latlng.lat, x._latlng.lng],
          address: x.address,
-         status: x.status
+         status: x.status,
+         name: x.name
       }))
 
    const range = $('#range').value;
@@ -118,19 +122,61 @@ async function refresh(from = 'filter') {
 
    responses.forEach((x,i) => {
       const shape = x.response.isoline[0].component[0].shape.map(z => z.split(','));
-      const poly = L.polygon(shape, {color: colors[coordinates[i].status](1), weight: 2});
+      const poly = L.polygon(shape, {
+         color: colors[coordinates[i].status](1), 
+         fillOpacity: 0.2,
+         weight: 2
+      });
 
       poly.jurisdiction = coordinates[i].jurisdiction;
       poly.address = coordinates[i].address;
       poly.status = coordinates[i].status;
+      poly.name = coordinates[i].name;
       poly.on('mouseover', e => {
+         console.log(e)
+         e.target.setStyle({
+            fillOpacity: 0.3
+         })
          L.popup({className: 'custom', closeButton: false})
             .setLatLng(e.latlng)
             .setContent(formatTooltip(poly))
             .openOn(map);
+         // console.log(e);
+         // showTooltip({
+         //    x: e.originalEvent.clientX,
+         //    y: e.originalEvent.clientY,
+         //    content: formatTooltip(poly)
+         // })
+         // const { x, y } = e.originalEvent
+         // tooltip.style.opacity = '1';
+         // tooltip.style.top = y + 'px';
+         // tooltip.style.left = x + 'px';
+         // tooltip.innerHTML = formatTooltip(poly);
+         // console.log('enter')
       });
-      poly.on('mouseout', () => {
-         map.closePopup();
+      poly.on('mousemove', e => {
+         // const { x, y } = e.originalEvent
+         // // tooltip.style.display = 'block';
+         // tooltip.style.top = y + 'px';
+         // tooltip.style.left = x + 'px';
+         // const { x, y } = e.originalEvent
+         // tooltip.style.top = y + 'px';
+         // tooltip.style.left = x + 'px';
+         // showTooltip({
+         //    x: e.originalEvent.clientX,
+         //    y: e.originalEvent.clientY,
+         //    content: formatTooltip(poly)
+         // })
+         console.log('inside')
+      })
+      poly.on('mouseout', e => {
+         e.target.setStyle({
+            fillOpacity: 0.2
+         })
+         // map.closePopup();
+         // // closeTooltip();
+         // tooltip.style.opacity = '0';
+         // console.log('leave')
       });
       poly.addTo(polygonGroup);
    });
@@ -147,23 +193,39 @@ function addMarker(latitude, longitude) {
    map.flyTo([latitude, longitude], 15);
 }
 
+function showTooltip({x, y, content}) {
+   console.log(x, y)
+   tooltip.style.display = 'block';
+   tooltip.style.top = y + 'px';
+   tooltip.style.left = x + 'px';
+   tooltip.innerHTML = content;
+}
 
-function formatTooltip({jurisdiction, address, status, _latlngs}) {
+function closeTooltip() {
+   tooltip.style.display = 'none';
+}
+
+function formatTooltip({jurisdiction, address, status, _latlngs, name}) {
    const geojsonPolygon = turf.lineToPolygon(turf.lineString(_latlngs[0].map(x => [x.lng, x.lat])))
    const areaMilesSquared = turf.area(geojsonPolygon) / 2.59e+6;
    return `\
-   <div class="key">
-      <div>Jurisdiction</div>
-      <div>Status</div>
-      <div>Area</div>
-      <div>Address</div>
-   </div>
    <div>
-      <div>${jurisdiction}</div>
-      <div>${status}</div>
-      <div>${areaMilesSquared.toFixed(2)} square miles</div>
-      <div>${address}</div>
-   </div>`
+      <h3>${name}</h3>
+      <div class="tooltip-grid">
+         <div class="key">
+            <div>Jurisdiction</div>
+            <div>Status</div>
+            <div>Area</div>
+            <div>Address</div>
+         </div>
+         <div>
+            <div>${jurisdiction}</div>
+            <div>${status}</div>
+            <div>${areaMilesSquared.toFixed(2)} square miles</div>
+            <div>${address}</div>
+         </div>
+      </div>
+   <div>`
 }
 
 let filterOpen = false;

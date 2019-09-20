@@ -7,7 +7,7 @@ const credentials = {
 const colors = {
    exists: a => `rgba(101,99,226, ${a})`,
    planned: a => `rgba(255, 122, 142, ${a})`,
-   recommend: a =>  `rgba(121, 247, 202, ${a})`,
+   recommended: a =>  `rgba(121, 247, 202, ${a})`,
 }
 
 const pinColor = 'black';
