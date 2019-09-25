@@ -1,0 +1,36 @@
+.leaflet-popup {
+   transition: none;
+   -webkit-backface-visibility: hidden;
+   backface-visibility: hidden;
+}
+
+.custom .leaflet-popup-tip {
+   display: none;
+}
+.leaflet-popup-content-wrapper {
+   padding: 10px;
+   min-width: 300px;
+}
+.custom .leaflet-popup-content-wrapper {
+   background: #fff;
+   padding: 0;
+   margin: 0;
+   border-radius: var(--border-radius);
+   box-shadow: var(--shadow);
+}
+.custom .leaflet-popup-content {
+   padding: var(--larger-spacing);
+   margin: 0;
+   font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+   font-size: var(--font-size);
+   color: grey;
+}
+
+.tooltip-grid {
+   display: grid;
+   grid-template-columns: 80px 1fr;
+}
+
+.key {
+   color: black;
+}

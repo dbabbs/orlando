@@ -1,0 +1,12 @@
+#sidebar {
+   width: 300px;
+   background: white;
+   z-index: 500000;
+   position: absolute;
+   margin: var(--larger-spacing);
+   padding: var(--larger-spacing);
+   max-height: calc(100vh - 2 * var(--larger-spacing));
+   box-sizing: border-box;
+   border-radius: var(--border-radius);
+   box-shadow: var(--shadow);
+}

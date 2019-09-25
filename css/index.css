@@ -7,20 +7,7 @@
    --font-size: 13px;
 }
 
-#tooltip {
-   top: 0;
-   left: 0;
-   position: absolute;
-   z-index: 50000000;
-   width: 300px;
-   background: white;
-   height: 300px;
-   opacity: 0;
-}
-
-
-body,
-html {
+body, html {
   border: 0;
   padding: 0;
   margin: 0;
@@ -29,111 +16,51 @@ html {
   color: grey;
 }
 
+/*
+Fonts
+*/
+
+h1, h2, h3 {
+   font-family: Georgia, serif;
+   color: black;
+   font-weight: 500;
+}
+
 h1 {
-  font-family: Georgia, serif;
-  margin: 0 0 var(--spacing) 0;
-  font-weight: 400;
-  font-size: 24px;
-  color: black;
+   margin: 0 0 var(--spacing) 0;
+   font-size: 24px;
+  
 }
 
 h2 {
-	font-family: Georgia, serif;
 	font-size: 18px;
 	margin: var(--spacing) 0;
-   font-weight: 500;
-   color: black;
 }
 
 h3 {
-	font-family: Georgia, serif;
 	font-size: 15px;
    margin: 0;
    margin-bottom: var(--spacing);
-   font-weight: 500;
-   color: black;
 }
 
 p {
   font-size: var(--font-size);
   margin: var(--spacing) 0;
+  color: grey;
 }
+
 #map {
   width: 100vw;
   height: 100vh;
 }
-#sidebar {
-  width: 300px;
-  background: white;
-  z-index: 500000;
-  position: absolute;
-  margin: var(--larger-spacing);
-  padding: var(--larger-spacing);
-  max-height: calc(100vh - 2 * var(--larger-spacing));
-
-  box-sizing: border-box;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-}
-
-
-
-
-
-p {
-  font-size: var(--font-size);
-  color: grey;
-}
-
-
 
 .emphasis {
-  color: black;
-  font-weight: bold;
-}
-
-.leaflet-popup {
-   transition: none;
-   -webkit-backface-visibility: hidden;
-   backface-visibility: hidden;
-}
-
-.custom .leaflet-popup-tip {
-  display: none;
-}
-.leaflet-popup-content-wrapper {
-   padding: 10px;
-   min-width: 300px;
-}
-.custom .leaflet-popup-content-wrapper {
-  background: #fff;
-  padding: 0;
-  margin: 0;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-  
-}
-.custom .leaflet-popup-content {
-   padding: var(--larger-spacing);
-   margin: 0;
-   font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-   font-size: var(--font-size);
-   color: grey;
-   
-   
-}
-
-.tooltip-grid {
-   display: grid;
-   grid-template-columns: 80px 1fr;
-}
-
-.key {
-  color: black;
+   color: black;
+   font-weight: bold;
 }
 
 #clear {
-  display: none;
+   display: none;
 }
 
 
@@ -144,11 +71,11 @@ p {
 }
 
 .square {
-  height: 14px;
-  width: 14px;
-  display: inline-block;
-  border-radius: var(--border-radius);
-  margin-right: 8px;
+   height: 14px;
+   width: 14px;
+   display: inline-block;
+   border-radius: var(--border-radius);
+   margin-right: 8px;
 }
 
 .circle {
@@ -159,74 +86,6 @@ p {
    margin-right: 9px;
    margin-left: 3px;
    background: black;
- }
-
-
-
-
-
-/**
-
-SEARCH CONTAINER
-
-
-**/
-
-#search-container {
-	background: white;
-	margin: var(--larger-spacing);
-	position: absolute;
-	border-radius: var(--border-radius);
-	box-shadow: var(--shadow);
-	right: 0;
-	width: 300px;
-	z-index: 500000;
-}
-
-#search-field-container {
-   display: flex;
-   align-items: center;
-}
-
-#search-field-container img {
-   fill: lightgray;
-   padding: 0 0 0 10px;
-   height: 20px;
-   color: lightgray;
-   user-select: none;
-   -moz-user-select: none;
-   -webkit-user-select: none;
-}
-
-
-
-.text-field {
-	border-radius: var(--border-radius);
-	padding: 10px;
-	color: black;
-	width: 100%;
-	border: 0px;
-	font-size: 14px;
-}
-
-
-.text-field::placeholder {
-	color: lightgrey;
-}
-
-.text-field:focus {
-	outline: none;
-}
-
-.autocomplete-items {
-	position: relative;
-}
-
-.item {
-	cursor: pointer;
-	padding: 10px;
-	color: gray;
-	border-top: 1px solid lightgray;
 }
 
 .active {
@@ -234,29 +93,21 @@ SEARCH CONTAINER
 }
 
 /*
-*
-*
-FILTER ITEMS 
+Filter items
 */
 
 .filter-container {
-   /* border-radius: var(--border-radius); */
    box-shadow: var(--shadow);
    border-radius: 4px;
-   /* border: 1px solid black; */
-   /* box-sizing: border-box; */
 }
 
 .filters {
-   /* border-radius: 10px; */
-	padding: 10px;
-   
+	padding: 10px; 
 	color: grey;
 	width: 100%;
 	border: 0px;
    font-size: 14px;
    box-sizing: border-box;
-   
    cursor: pointer;
    position: relative;
    background: white;   
@@ -275,23 +126,17 @@ FILTER ITEMS
    height: 20px;
 }
 .filter-items {
-   /* display: none; */
    height: 0;
    position: absolute; 
    width: calc(100% - 2 * var(--larger-spacing));
-   /* height: 200px;  */
    box-sizing: border-box;
    box-shadow: var(--shadow);
-   /* border: 1px solid black; */
    overflow-y: scroll;
    transition: .2s all ease-in-out;
    max-height: 350px;
 }
 
-
-
 .filter-item {
-   /* padding: 10px 10px; */
    color: gray;
    background: white;
    box-sizing: border-box;
@@ -311,12 +156,10 @@ FILTER ITEMS
    padding: 10px 0;
 }
 .filter-item label {
-   /* background: blue; */
    padding: 10px 0;
    width: 100%;
    cursor: pointer;
    padding-left: 5px;
-   /* display: inline-block; */
 }
 
 #loading-container {
@@ -385,39 +228,28 @@ FILTER ITEMS
    border-radius: 2px;
 }
 
- /*
+/*
+Radio buttons
+*/
 
- Radio buttons
-
- */
-
-.radio-container-grid {
-   display: grid;
-   grid-template-columns: 1fr 1fr;
-}
-
-/* Radio Buttons */
 .radio-container {
    display: block;
    position: relative;
    padding-left: 25px;
    margin: 15px 0;
    cursor: pointer;
-   /* font-size: 22px; */
    user-select: none;
    -moz-user-select: none;
    -webkit-user-select: none;
    font-size: var(--font-size);
 }
 
- /* Hide the browser's default radio button */
 .radio-container input {
    position: absolute;
    opacity: 0;
    cursor: pointer;
 }
- 
- /* Create a custom radio button */
+
 .checkmark {
    position: absolute;
    top: 0;
@@ -430,25 +262,21 @@ FILTER ITEMS
    transition: .1s all ease-in-out;
 }
 
- /* When the radio button is checked, add a blue background */
 .radio-container input:checked ~ .checkmark {
    background-color: black;
    border: 1px solid transparent;
 }
  
- /* Create the indicator (the dot/circle - hidden when not checked) */
 .checkmark:after {
    content: "";
    position: absolute;
    display: none;
 }
  
- /* Show the indicator (dot/circle) when checked */
 .radio-container input:checked ~ .checkmark:after {
    display: block;
 }
  
- /* Style the indicator (dot/circle) */
 .radio-container .checkmark:after {
    top: 5px;
    left: 5px;
