@@ -15,7 +15,7 @@ const pinColor = 'black';
 const labels = {
    exists: 'Existing station range',
    planned: 'Planned station range',
-   recommend: 'Recommended future station range'
+   recommended: 'Recommended future station range'
 }
 
 const scene = 'resources/scene.yaml'
