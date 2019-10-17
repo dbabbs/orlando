@@ -8,7 +8,7 @@
    <link rel="stylesheet" type="text/css" href="css/search.css">
    <link rel="stylesheet" type="text/css" href="css/tooltip.css">
    <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
-
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 
 <body>
@@ -29,46 +29,51 @@
       <h1>Minutes Matter</h1>
       <p>An analysis of 195 fire stations in the greater Orlando area shows the expected response times of local fire
          departments.</p>
-      <h2>Range</h2>
-      <p>Configure a range in distance from each fire station.</p>
-      <div class="slider-container">
-         <input class="range" type="range" id="range" min="0" value="300" max="600">
-         <div id="range-text"></div>
-      </div>
-      <h2>Range Type</h2>
-      <p>Choose between distance or time as a range type.</p>
-      <div class="">
-         <label class="radio-container">
-            <input class="range-type" type="radio" id="time" name="mode" checked>
-            <span class="checkmark"></span>
-            Time (minutes)
-         </label>
-         <label class="radio-container">
-            <input class="range-type" type="radio" id="distance" name="mode">
-            <span class="checkmark"></span>
-            Distance (miles)
-         </label>
+      <button id="expand-button">Expand Sidebar</button>
+      <div class="sidebar-content">
+         <h2>Range</h2>
+         <p>Configure a range in distance from each fire station.</p>
+         <div class="slider-container">
+            <input class="range" type="range" id="range" min="0" value="300" max="600">
+            <div id="range-text"></div>
+         </div>
+         <h2>Range Type</h2>
+         <p>Choose between distance or time as a range type.</p>
+         <div class="">
+            <label class="radio-container">
+               <input class="range-type" type="radio" id="time" name="mode" checked>
+               <span class="checkmark"></span>
+               Time (minutes)
+            </label>
+            <label class="radio-container">
+               <input class="range-type" type="radio" id="distance" name="mode">
+               <span class="checkmark"></span>
+               Distance (miles)
+            </label>
+         </div>
+
+         <h2>Department Jurisdictions</h2>
+         <p>Explore a single or multiple jurisdictions</p>
+         <div class="filter-container">
+            <div class="filters">
+               <div class="filter-text"></div>
+               <img src="resources/down.svg">
+            </div>
+            <div class="filter-items">
+               <div class="filter-item select-text" id="select-all">
+                  Select all
+               </div>
+               <div class="filter-item select-text" id="select-none">
+                  Select none
+               </div>
+            </div>
+         </div>
+         <p id="num"></p>
+         <h2>Legend</h2>
+         <div class="sidebar-key"></div>
       </div>
 
-      <h2>Department Jurisdictions</h2>
-      <p>Explore a single or multiple jurisdictions</p>
-      <div class="filter-container">
-         <div class="filters">
-            <div class="filter-text"></div>
-            <img src="resources/down.svg">
-         </div>
-         <div class="filter-items">
-            <div class="filter-item select-text" id="select-all">
-               Select all
-            </div>
-            <div class="filter-item select-text" id="select-none">
-               Select none
-            </div>
-         </div>
-      </div>
-      <p id="num"></p>
-      <h2>Legend</h2>
-      <div class="sidebar-key"></div>
+      <button id="hide-button">Hide Sidebar</button>
    </div>
    <div id="map"></div>
 

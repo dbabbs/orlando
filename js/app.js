@@ -5,8 +5,6 @@ import { $, $$, openLoading, closeLoading, setMax, openFilter,
    closeFilter, updateFilterText, initializeSidebar, setRangeText
 } from './helpers.js';
 
-const tooltip = $('#tooltip');
-
 const map = L.map('map', {
    center: [28.480057258090312, -81.35272980000002],
    zoom: 11,
@@ -35,7 +33,6 @@ async function start() {
    const url = `https://xyz.api.here.com/hub/spaces/${credentials.xyzId}/search?access_token=${credentials.xyzToken}`;
    const data = await fetch(url).then(res => res.json());
    
-   console.table([...new Set(data.features.map(x => x.properties.status))])
    data.features.forEach(y => {
       const [lat, lng] = y.geometry.coordinates;
       const point = L.circleMarker([lng, lat], {
@@ -212,5 +209,48 @@ $('#select-none').onclick = () => {
    $$('.filter').forEach(f => f.checked = false);
    refresh();
 }
+
+function closeSidebar() {
+   sidebarOpen = false;
+
+   $('#expand-button').style.display = 'block';
+   $('.sidebar-content').style.display = 'none';
+   $('#hide-button').style.display = 'none';
+}
+   
+
+function openSidebar() {
+   sidebarOpen = true;
+   $('#expand-button').style.display = 'none';
+   $('.sidebar-content').style.display = 'block';
+   $('#hide-button').style.display = 'block';
+}
+
+function hideSidebarSizingControls() {
+   $('#hide-button').style.display = 'none';
+   $('#expand-button').style.display = 'none';
+}
+
+function showSidebarSizingControls() {
+   $('#hide-button').style.display = 'block';
+   $('#expand-button').style.display = 'block';
+}
+
+let sidebarOpen = true;
+function sizeSidebar() {
+   const { innerWidth } = window;
+   if (innerWidth < 640) {
+      
+      closeSidebar();
+   } else {
+      openSidebar();
+      hideSidebarSizingControls();
+   }
+}
+sizeSidebar();
+window.onresize = () => sizeSidebar();
+
+$('#expand-button').onclick = () => openSidebar();
+$('#hide-button').onclick = () => closeSidebar();
 
 export { addMarker };

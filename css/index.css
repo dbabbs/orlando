@@ -285,3 +285,18 @@ Radio buttons
    border-radius: 50%;
    background: white;
 }
+
+
+button {
+   color: black;
+   background: white;
+   border: 1px solid #F1F1F1;
+   border-radius: 4px;
+   box-shadow: 0px 1px 5px #D5D5D5;
+   padding: 10px 12px;
+   font-size: 12px;
+   width: 100%;
+   font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+   margin: 10px 0;
+   cursor: pointer;
+}

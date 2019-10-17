@@ -10,6 +10,12 @@
 	z-index: 500000;
 }
 
+@media only screen and (max-width: 640px) {
+   #search-container {
+      display: none;
+   }
+}
+
 #search-field-container {
    display: flex;
    align-items: center;

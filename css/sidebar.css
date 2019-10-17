@@ -5,8 +5,20 @@
    position: absolute;
    margin: var(--larger-spacing);
    padding: var(--larger-spacing);
+   padding-bottom: 5px;
    max-height: calc(100vh - 2 * var(--larger-spacing));
    box-sizing: border-box;
    border-radius: var(--border-radius);
    box-shadow: var(--shadow);
+   overflow-y: hidden;
+}
+
+@media only screen and (max-width: 414px) {
+   #sidebar {
+      width: calc(100vw - var(--larger-spacing) * 2);
+   }
+}
+
+#hide-button, #expand-button {
+   display: none;
 }
