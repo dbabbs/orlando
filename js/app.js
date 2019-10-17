@@ -1,5 +1,5 @@
 import Search from './Search.js';
-import { colors, pinColor, scene } from './config.js';
+import { colors, pinColor, scene, credentials } from './config.js';
 import { isolineUrl } from './here.js';
 import { $, $$, openLoading, closeLoading, setMax, openFilter, 
    closeFilter, updateFilterText, initializeSidebar, setRangeText
@@ -7,17 +7,14 @@ import { $, $$, openLoading, closeLoading, setMax, openFilter,
 
 const tooltip = $('#tooltip');
 
-
 const map = L.map('map', {
    center: [28.480057258090312, -81.35272980000002],
    zoom: 11,
    layers: [Tangram.leafletLayer({ scene })],
    zoomControl: false
 });
-map.attributionControl.addAttribution('Tangram | &copy; HERE 2019');
-L.control.zoom({
-   position: 'bottomright'
-}).addTo(map);
+map.attributionControl.addAttribution('<a href="https://https://tangrams.readthedocs.io/en/latest/">Tangram</a> | &copy; <a href="https://developer.here.com">HERE 2019</a>');
+L.control.zoom({ position: 'bottomright' }).addTo(map);
 
 new Search();
 initializeSidebar();
@@ -27,9 +24,7 @@ slider.onchange = () => refresh('slider');
 slider.oninput = setRangeText;
 
 $$('.range-type').forEach(t => t.onchange = () => refresh('range-type'))
-
 setRangeText();
-
 
 const points = [];
 const pointLayer = L.layerGroup().addTo(map);
@@ -37,7 +32,8 @@ const polygonGroup = L.featureGroup().addTo(map);
 const markerLayer = L.layerGroup().addTo(map)
 
 async function start() {
-   const data = await fetch('data/fire_stations.geojson').then(res => res.json());
+   const url = `https://xyz.api.here.com/hub/spaces/${credentials.xyzId}/search?access_token=${credentials.xyzToken}`;
+   const data = await fetch(url).then(res => res.json());
    
    console.table([...new Set(data.features.map(x => x.properties.status))])
    data.features.forEach(y => {
@@ -45,8 +41,8 @@ async function start() {
       const point = L.circleMarker([lng, lat], {
          radius: 3,
          fillColor: pinColor,
-         color: pinColor,
-         weight: 1,
+         color: 'white',
+         weight: 3,
          opacity: 1,
          fillOpacity: 0.8
       });
@@ -120,6 +116,11 @@ async function refresh(from = 'filter') {
    const isolinePromises = coordinates.map(x => fetch(isolineUrl(x.coordinates, range, rangeType)).then(res => res.json()));
    const responses = await Promise.all(isolinePromises);
 
+
+   const output = {
+      type: 'FeatureCollection',
+      features: []
+   }
    responses.forEach((x,i) => {
       const shape = x.response.isoline[0].component[0].shape.map(z => z.split(','));
       const poly = L.polygon(shape, {
@@ -133,60 +134,20 @@ async function refresh(from = 'filter') {
       poly.status = coordinates[i].status;
       poly.name = coordinates[i].name;
 
-
-      var popup = L.popup({className: 'custom', closeButton: false});
+      const popup = L.popup({className: 'custom', closeButton: false});
       poly.bindPopup(popup);
       poly.on('mouseover', e => {
-         console.log(e)
-         e.target.setStyle({
-            fillOpacity: 0.4
-         })
-         // L.popup({className: 'custom', closeButton: false})
-         //    .setLatLng(e.latlng)
-         //    .setContent(formatTooltip(poly))
-         //    .openOn(map);
-         var popup = e.target.getPopup();
+         e.target.setStyle({ fillOpacity: 0.4 })
+         const popup = e.target.getPopup();
          popup.setLatLng(e.latlng).setContent(formatTooltip(poly)).openOn(map);
-         // console.log(e);
-         // showTooltip({
-         //    x: e.originalEvent.clientX,
-         //    y: e.originalEvent.clientY,
-         //    content: formatTooltip(poly)
-         // })
-         // const { x, y } = e.originalEvent
-         // tooltip.style.opacity = '1';
-         // tooltip.style.top = y + 'px';
-         // tooltip.style.left = x + 'px';
-         // tooltip.innerHTML = formatTooltip(poly);
-         // console.log('enter')
       });
       poly.on('mousemove', e => {
-         // const { x, y } = e.originalEvent
-         // // tooltip.style.display = 'block';
-         // tooltip.style.top = y + 'px';
-         // tooltip.style.left = x + 'px';
-         // const { x, y } = e.originalEvent
-         // tooltip.style.top = y + 'px';
-         // tooltip.style.left = x + 'px';
-         // showTooltip({
-         //    x: e.originalEvent.clientX,
-         //    y: e.originalEvent.clientY,
-         //    content: formatTooltip(poly)
-         // })
-         // e.target.closePopup();
-         var popup = e.target.getPopup();
+         const popup = e.target.getPopup();
          popup.setLatLng(e.latlng).openOn(map);
-         console.log(e.latlng)
       })
       poly.on('mouseout', e => {
-         e.target.setStyle({
-            fillOpacity: 0.2
-         })
+         e.target.setStyle({ fillOpacity: 0.2 })
          e.target.closePopup();
-         // map.closePopup();
-         // // closeTooltip();
-         // tooltip.style.opacity = '0';
-         // console.log('leave')
       });
       poly.addTo(polygonGroup);
    });
@@ -201,18 +162,6 @@ function addMarker(latitude, longitude) {
    markerLayer.clearLayers();
    L.marker([latitude, longitude]).addTo(markerLayer);
    map.flyTo([latitude, longitude], 15);
-}
-
-function showTooltip({x, y, content}) {
-   console.log(x, y)
-   tooltip.style.display = 'block';
-   tooltip.style.top = y + 'px';
-   tooltip.style.left = x + 'px';
-   tooltip.innerHTML = content;
-}
-
-function closeTooltip() {
-   tooltip.style.display = 'none';
 }
 
 function formatTooltip({jurisdiction, address, status, _latlngs, name}) {
@@ -263,6 +212,5 @@ $('#select-none').onclick = () => {
    $$('.filter').forEach(f => f.checked = false);
    refresh();
 }
-
 
 export { addMarker };

@@ -1,7 +1,8 @@
 const credentials = {
    id: 'Wf3z49YJK9ieJhsun9Wx',
    code: '8T7Stg2Jq1qvkfBn3Za4qw',
-   apikey: 'EybNF4MkvcUj8WX1VJRKhT9dwDVz1wIHaKGF5tpqNss'
+   xyzId: 'fYhuyi7V',
+   xyzToken: 'AGrdMdqrcvM-4h-0PXlBi8U'
 }
 
 const colors = {
