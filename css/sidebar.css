@@ -10,14 +10,25 @@
    box-sizing: border-box;
    border-radius: var(--border-radius);
    box-shadow: var(--shadow);
-   overflow-y: hidden;
+   overflow-y: scroll;
 }
 
 @media only screen and (max-width: 414px) {
    #sidebar {
       width: calc(100vw - var(--larger-spacing) * 2);
    }
+
+   .radio-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+   }
+
+   .legend-text, .sidebar-key {
+      display: none;
+   }
 }
+
+
 
 #hide-button, #expand-button {
    display: none;
