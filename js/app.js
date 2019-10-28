@@ -133,6 +133,13 @@ async function refresh(from = 'filter') {
 
       const popup = L.popup({className: 'custom', closeButton: false});
       poly.bindPopup(popup);
+
+      poly.on('click', e => {
+         e.target.setStyle({ fillOpacity: 0.4 })
+         const popup = e.target.getPopup();
+         popup.setLatLng(e.latlng).setContent(formatTooltip(poly)).openOn(map);
+      });
+
       poly.on('mouseover', e => {
          e.target.setStyle({ fillOpacity: 0.4 })
          const popup = e.target.getPopup();
