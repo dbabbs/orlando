@@ -7,6 +7,15 @@
    --font-size: 13px;
 }
 
+html {
+   overflow: scroll;
+   overflow-x: hidden;
+}
+::-webkit-scrollbar {
+   width: 0px;  /* Remove scrollbar space */
+   background: transparent;  /* Optional: just make scrollbar invisible */
+}
+
 body, html {
   border: 0;
   padding: 0;
